@@ -1,0 +1,25 @@
+
+services:
+  sender:
+    build: ./sender
+    volumes:
+      - ./docs-in:/consume
+      - ./certs:/certs
+    environment:
+      SMTP_HOST: mx.yourdomain.com
+      SMTP_PORT: 465
+      SMTP_USER: username
+      SMTP_PASS: "pass"
+      MAIL_TO: to@yourdomain.com
+      MAIL_FROM: noreply@yourdomain.com
+
+  receiver:
+    build: ./receiver
+    volumes:
+      - ./docs-out:/attachments
+      - ./certs:/certs
+    environment:
+      IMAP_HOST: mx.yourdomain.com
+      IMAP_USE_SSL: True
+      IMAP_USER: username
+      IMAP_PASS: "pass"

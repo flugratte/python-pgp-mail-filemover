@@ -1,0 +1,2 @@
+envelope==1.5.3
+python-gnupg==0.4.7

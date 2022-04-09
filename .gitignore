@@ -1,0 +1,5 @@
+/.idea
+
+*.iml
+*.asc
+/docker-compose.yml

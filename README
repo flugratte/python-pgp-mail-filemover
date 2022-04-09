@@ -1,0 +1,21 @@
+# Summary
+Simple tool to automatically move files between two systems by sending PGP encrypted E-Mails with attachments.
+
+# Why?
+I needed to move files scanned by my local printer to a remote server.
+My printer did not support scanning to network devices via SFTP or any other encrypted communication.
+It would have been possible, to use unsecured FTP to scan directly to a folder on the remote server, but I did not like that idea. 
+
+Thus, I came up with the idea of scanning to a local path on my NAS (which supports running containers) and move it by E-Mail.
+
+I played around a bit with different languages and libraries, until I found the [Envelope](https://github.com/CZ-NIC/envelope) Library/Tool and a neat description on [How to Read Emails in Python](https://www.thepythoncode.com/article/reading-emails-in-python).
+This massively simplified the effort and after a bit of tinkering, moving stuff to config files and testing. I had a tool with which I could move the files securely.
+
+# How to use?
+To use it you need two certificates. You can either use already existing ones, or generate new ones specifically for this task. One for the sending and one for the receiving E-Mail address. The following mentioned key-files have to be provided in ASCII form.
+
+The sender needs the private key for the sending and the public key for the receiving E-Mail address. Both have to be available into the /certs folder of the image.
+
+The receiver needs the private key for the receiving E-Mail address, also in the /certs folder of the container.
+ 
+The remaining configuration for the sender/receiver can be done by either supplying a configured config.ini in the /app-folder of the container, or by supplying the values as environment variables.
