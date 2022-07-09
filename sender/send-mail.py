@@ -1,5 +1,6 @@
 import configparser
 import os
+import smtplib
 import time
 from datetime import datetime
 
@@ -32,11 +33,15 @@ while True:
         SMTP_USER = os.environ.get("SMTP_USER", config.get("SMTP", "user"))
         SMTP_PASS = os.environ.get("SMTP_PASS", config.get("SMTP", "pass"))
 
+        smtp_connection = smtplib.SMTP_SSL(host=SMTP_HOST, port=int(SMTP_PORT))
+        smtp_connection.login(SMTP_USER, SMTP_PASS)
+        print(datetime.now(), "| SMTP Connection ready")
         for file in os.listdir(CONSUME_DIR):
-            print("Processing:", file)
+            print(datetime.now(), "Processing:", file)
             SUBJECT = "New Document " + str(datetime.now())
             FILEPATH = os.path.join(CONSUME_DIR, file)
             e = (Envelope()
+                 .smtp(smtp_connection, int(SMTP_PORT), SMTP_USER, SMTP_PASS, "tls")
                  .subject(SUBJECT)
                  .message("See attachment")
                  .from_(MAIL_FROM)
@@ -45,12 +50,13 @@ while True:
                  .encryption()
                  )
             e.as_message()  # returns EmailMessage
-            success = e.smtp(SMTP_HOST, int(SMTP_PORT), SMTP_USER, SMTP_PASS, "tls").send()  # directly sends
+            success = e.send()  # directly sends
             if success:
-                print("Sent:", file)
+                print(datetime.now(), "Sent:", file)
                 os.remove(FILEPATH)
             else:
-                print("Failed to send:", file)
+                print(datetime.now(), "Failed to send:", file)
+        smtp_connection.close()
 
     if SLEEP_TIME > 0:
         time.sleep(SLEEP_TIME)
